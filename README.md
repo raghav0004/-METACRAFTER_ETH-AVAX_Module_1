@@ -1,6 +1,6 @@
-##################################################
+
 # Metacrafters_ETH+AVAX_Intermediate_Module_01_Submission
-##################################################
+
 
 ## Voting System Smart Contract
 
