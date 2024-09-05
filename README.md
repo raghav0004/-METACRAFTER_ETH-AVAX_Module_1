@@ -4,101 +4,34 @@
 
 ## Voting System Smart Contract
 
-The VotingSystem smart contract is a decentralized application designed to manage a proposal-based voting system on the Ethereum blockchain. This contract demonstrates exception handling using `require()`, `assert()`, and `revert()` statements, which are crucial for ensuring robust and secure smart contract functionality.
+This smart contract implements a simple voting simulation on the Ethereum blockchain using Solidity. The contract allows users to cast their votes, ensuring they meet the age requirement and have not already voted.
 
-### Contract Introduction
+Prerequisites
+Solidity version ^0.8.18.
+An Ethereum development environment such as Hardhat, Truffle, or Remix.
+Contract Explanation
+State Variables
+The voteCount mapping tracks the number of votes each voter has cast, while the hasVoted mapping keeps a record of whether a voter has already voted or not.
 
-The VotingSystem smart contract enables the creation of proposals, allows users to vote on these proposals, and provides mechanisms for finalizing the proposals based on the voting results. The contract ensures that only the owner can create and finalize proposals while allowing any address to cast votes. The use of events provides transparency and traceability for proposal creation, voting, and finalization actions.
+Functions
+vote(string memory voter, uint _age) external
+This function allows a voter to cast their vote. It first verifies the age of the voter using the ageVerify function. Then, it checks if the voter has already voted using the hasVoted mapping. If the voter has not voted before and meets the age requirement, the function increments the vote count for the voter and sets the voter's status to "voted" in the hasVoted mapping. Finally, it uses an assertion to ensure the vote count is incremented correctly.
 
-### Variables and Structs
+ageVerify(uint _age) public pure
+This function checks if the voter meets the age requirement of 18 years or older. If the voter's age is less than 18, the function reverts with the message "Voter is not eligible to Vote". This function is marked as pure since it does not read or modify the state.
 
-- **contractOwner**: The address of the contract owner, who has special privileges to create and finalize proposals.
-- **totalProposals**: A counter tracking the total number of proposals created.
-- **Proposal Struct**: Defines the structure of a proposal, which includes:
-  - `proposalId`: Unique identifier for the proposal
-  - `proposalDescription`: Text description of the proposal
-  - `totalVotes`: Number of votes received
-  - `isFinalized`: Boolean indicating if the proposal has been finalized
-- **proposalList Mapping**: Stores proposals by their unique ID.
-- **hasVoted Mapping**: Tracks whether an address has voted on a particular proposal.
+Usage
+Deploy the contract to the Ethereum network using an Ethereum development environment like Remix. After deployment, you can interact with the contract by calling the vote function with the voter's identifier and age.
 
-### Events
+Error handling
+The contract uses require, revert, and assert statements to handle errors and validate conditions throughout the voting process.
 
-- **NewProposal**: Emitted when a new proposal is created.
-- **VotedOnProposal**: Emitted when an address votes on a proposal.
-- **ProposalFinalized**: Emitted when a proposal is finalized, indicating whether it was accepted based on the vote count.
+Function with error handling
+The vote function handles errors by calling the ageVerify function to ensure the voter meets the age requirement. It then checks if the voter has already voted using require and ensures the vote count is incremented correctly with assert. The ageVerify function verifies the age of the voter and reverts the transaction if the voter is under 18.
 
-### Modifiers
-
-- **onlyContractOwner**: Ensures that only the owner can execute certain functions, providing a security check.
-
-### Constructor
-
-- **Constructor**
-  - Sets the deploying address as the owner of the contract.
-
-### Functions
-
-1. **createNewProposal**
-   - Description: Allows the owner to create a new proposal with a given description.
-   - Parameters: `string description`
-   - Actions:
-     - Increment the total proposal count.
-     - Store the new proposal in the proposalList mapping.
-     - Emit `NewProposal` event.
-
-2. **castVote**
-   - Description: Allows any address to vote on an existing proposal.
-   - Parameters: `uint proposalId`
-   - Actions:
-     - Check if the proposal exists.
-     - Check if the proposal has been finalized.
-     - Check if the address has already voted.
-     - Record the vote in the hasVoted mapping.
-     - Increment the proposal's totalVotes.
-     - Emit `VotedOnProposal` event.
-
-3. **finalizeProposal**
-   - Description: Allows the owner to finalize a proposal.
-   - Parameters: `uint proposalId`
-   - Actions:
-     - Check if the proposal exists.
-     - Check if the proposal has already been finalized.
-     - Mark the proposal as finalized.
-     - Emit `ProposalFinalized` event indicating whether the proposal was accepted based on the vote count.
-     - Assert that the proposal is marked as finalized.
-
-4. **getProposalDetails**
-   - Description: Provides details of a specific proposal.
-   - Parameters: `uint proposalId`
-   - Returns: `uint proposalId, string proposalDescription, uint totalVotes, bool isFinalized`
-
-5. **changeOwnership**
-   - Description: Allows the owner to transfer ownership of the contract to a new address.
-   - Parameters: `address newOwner`
-   - Actions:
-     - Require that the new owner address is not the zero address.
-     - Update the contract owner to the new address.
-
-### Deploying the Contract
-
-1. **Setup Environment**
-   - Install and set up a development environment such as Truffle or Hardhat.
-   - Ensure you have an Ethereum wallet like MetaMask configured.
-
-2. **Compile the Contract**
-   - Use the Solidity compiler (solc) to compile the contract, ensuring there are no syntax errors.
-
-3. **Deploy Script**
-   - Write a deployment script using web3.js or ethers.js to deploy the contract.
-   - Specify the contract's ABI and bytecode.
-
-4. **Deploy**
-   - Execute the deployment script using a connected Ethereum account with sufficient gas fees.
-   - Deploy the contract to the specified Ethereum network.
-
-5. **Verify Deployment**
-   - Verify the contract address.
-   - Ensure the contract owner's address is correctly set.
-
-By following these steps, the VotingSystem contract will be live on the Ethereum network, ready to create proposals, accept votes, and finalize decisions based on decentralized voting.
+Error handling statements
+require: Ensures conditions are met before proceeding. If the condition is not met, it reverts the transaction with an error message: "You have already voted".
+revert: Explicitly reverts the transaction with an error message if a condition is not satisfied: "Voter is not eligible to Vote".
+assert: Checks for conditions that should never be false. If the condition is false, it indicates a critical error and reverts the transaction to ensure the vote count is valid.
+Author
+Raghav Gupta
